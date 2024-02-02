@@ -1,8 +1,8 @@
 "use server";
 
+import { postMessage } from "../lib/slack/postMessage";
+
 export async function sendVideoMessage(channel) {
-  console.log("running");
-  const url = `https://slack.com/api/chat.postMessage`;
   const blocks = [
     {
       type: "video",
@@ -27,23 +27,6 @@ export async function sendVideoMessage(channel) {
         "https://a.slack-edge.com/80588/img/unfurl_icons/youtube.png",
     },
   ];
-
-  const response = await fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      channel: channel,
-      blocks: blocks,
-    }),
-    headers: {
-      Authorization: `Bearer ${process.env.SLACK_TOKEN}`,
-      "Content-Type": "application/json; charset-utf8",
-    },
-  });
-
-  const res = await response.json();
-  console.log(res);
-  if (res.ok !== true) {
-    throw new Error(res.error);
-  }
+  const res = await postMessage(channel, blocks);
   return res;
 }

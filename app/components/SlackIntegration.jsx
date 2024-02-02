@@ -14,7 +14,11 @@ import { Button } from "@/components/ui/button";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-export default function ChannelSelector({ channels, sendVideoMessage }) {
+export default function SlackIntegration({
+  channels,
+  actions,
+  sendVideoMessage,
+}) {
   const searchParams = useSearchParams();
 
   const [selectedChannel, setSelectedChannel] = useState(
@@ -46,13 +50,35 @@ export default function ChannelSelector({ channels, sendVideoMessage }) {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <Button
-        onClick={() => {
-          sendVideoMessage(selectedChannel);
-        }}
-      >
-        Send Video Message
-      </Button>
+      <section className="grid grid-cols-2">
+        <div>
+          <Button
+            onClick={() => {
+              actions.sendVideoMessage(selectedChannel);
+            }}
+          >
+            Send Plain Text Message
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              actions.sendVideoMessage(selectedChannel);
+            }}
+          >
+            Send Header Message
+          </Button>
+        </div>
+        <div>
+          <Button
+            onClick={() => {
+              actions.sendVideoMessage(selectedChannel);
+            }}
+          >
+            Send Video Message
+          </Button>
+        </div>
+      </section>
     </>
   );
 }
