@@ -10,22 +10,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-export default function SlackIntegration({
-  channels,
-  actions,
-  sendVideoMessage,
-}) {
+import { Button } from "@/components/ui/button";
+import { Toaster } from "@/components/ui/toaster";
+import { useSearchParams } from "next/navigation";
+import { useState, useOptimistic } from "react";
+
+export default function SlackIntegration({ channels, actions }) {
   const searchParams = useSearchParams();
+  const [toastMessages, settoastMessages] = useState([]);
+  const [optimisticToast, addOptimisticToast] = useOptimistic(
+    toastMessages,
+    (state, newMessage) => [...state, newMessage]
+  );
+
+  async function callSlack(e) {
+    const action = e.get("slackAction");
+    const calledAt = new Date().toLocaleTimeString();
+    const message = {
+      status: "Pending",
+      description: `Sent ${action} request`,
+      calledAt: calledAt,
+    };
+    await addOptimisticToast(message);
+    const res = await actions[action](selectedChannel);
+    if (res.ok) {
+      message.status = "Successful";
+    } else {
+      message.status = "Error";
+    }
+
+    settoastMessages((state) => [...state, message]);
+  }
 
   const [selectedChannel, setSelectedChannel] = useState(
     searchParams.get("selectedChannel")
       ? searchParams.get("selectedChannel")
       : ""
   );
+
   return (
     <>
       <Select
@@ -50,35 +82,56 @@ export default function SlackIntegration({
           </SelectGroup>
         </SelectContent>
       </Select>
-      <section className="grid grid-cols-2">
+      <section className="grid grid-cols-2 gap-2 p-6 mt-6 border rounded-md  border-grey bg-slate-50">
         <div>
-          <Button
-            onClick={() => {
-              actions.sendVideoMessage(selectedChannel);
-            }}
-          >
-            Send Plain Text Message
-          </Button>
+          <form action={callSlack}>
+            <input
+              type="hidden"
+              name="slackAction"
+              value="sendPlainTextMessage"
+            />
+            <Button type="submit">Send Plain Text Message</Button>
+          </form>
         </div>
-        <div>
-          <Button
-            onClick={() => {
-              actions.sendVideoMessage(selectedChannel);
-            }}
-          >
-            Send Header Message
-          </Button>
+        <div className="basis-1/2">
+          <form action={callSlack}>
+            <input type="hidden" name="slackAction" value="sendVideoMessage" />
+            <Button type="submit">Send Video Message</Button>
+          </form>
         </div>
-        <div>
-          <Button
-            onClick={() => {
-              actions.sendVideoMessage(selectedChannel);
-            }}
-          >
-            Send Video Message
-          </Button>
+        <div className="basis-1/2">
+          <form action={callSlack}>
+            <input type="hidden" name="slackAction" value="sendAlertMessage" />
+            <Button type="submit">Send Alert Message</Button>
+          </form>
         </div>
       </section>
+      <section>
+        <Table>
+          <TableCaption>A list of your recent Slack messages.</TableCaption>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Description</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Called At</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {optimisticToast.map((message) => {
+              return (
+                <TableRow key={message.calledAt}>
+                  <TableCell className="font-medium">
+                    {message.description}
+                  </TableCell>
+                  <TableCell>{message.status}</TableCell>
+                  <TableCell>{message.calledAt}</TableCell>
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </section>
+      <Toaster />
     </>
   );
 }
