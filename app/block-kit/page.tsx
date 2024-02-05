@@ -16,7 +16,7 @@ export default async function Home() {
   return (
     <main className="flex flex-col content-center m-6">
       <h1 className="text-2xl font-bold">Slack App Playground</h1>
-      <section>
+      <section className="mt-6">
         {isConfigured ? (
           <>
             <span>✅ Slack Token Found</span>

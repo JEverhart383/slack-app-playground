@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/table";
 
 import { Button } from "@/components/ui/button";
-import { Toaster } from "@/components/ui/toaster";
 import { useSearchParams } from "next/navigation";
 import { useState, useOptimistic } from "react";
 
@@ -59,7 +58,7 @@ export default function SlackIntegration({ channels, actions }) {
   );
 
   return (
-    <>
+    <div className="mt-6">
       <Select
         value={selectedChannel}
         onValueChange={(val) => {
@@ -82,31 +81,48 @@ export default function SlackIntegration({ channels, actions }) {
           </SelectGroup>
         </SelectContent>
       </Select>
-      <section className="grid grid-cols-2 gap-2 p-6 mt-6 border rounded-md  border-grey bg-slate-50">
-        <div>
-          <form action={callSlack}>
-            <input
-              type="hidden"
-              name="slackAction"
-              value="sendPlainTextMessage"
-            />
-            <Button type="submit">Send Plain Text Message</Button>
-          </form>
-        </div>
-        <div className="basis-1/2">
-          <form action={callSlack}>
-            <input type="hidden" name="slackAction" value="sendVideoMessage" />
-            <Button type="submit">Send Video Message</Button>
-          </form>
-        </div>
-        <div className="basis-1/2">
-          <form action={callSlack}>
-            <input type="hidden" name="slackAction" value="sendAlertMessage" />
-            <Button type="submit">Send Alert Message</Button>
-          </form>
-        </div>
-      </section>
-      <section>
+      {selectedChannel ? (
+        <section className="grid grid-cols-2 gap-2 p-6 mt-6 border rounded-md  border-grey bg-slate-50">
+          <h3 className="text-lg font-bold">Available Actions</h3>
+          <div>
+            <form action={callSlack}>
+              <input
+                type="hidden"
+                name="slackAction"
+                value="sendPlainTextMessage"
+              />
+              <Button type="submit">Send Plain Text Message</Button>
+            </form>
+          </div>
+          <div className="basis-1/2">
+            <form action={callSlack}>
+              <input
+                type="hidden"
+                name="slackAction"
+                value="sendVideoMessage"
+              />
+              <Button type="submit">Send Video Message</Button>
+            </form>
+          </div>
+          <div className="basis-1/2">
+            <form action={callSlack}>
+              <input
+                type="hidden"
+                name="slackAction"
+                value="sendAlertMessage"
+              />
+              <Button type="submit">Send Alert Message</Button>
+            </form>
+          </div>
+        </section>
+      ) : (
+        <section className="grid grid-cols-2 gap-2 p-6 mt-6 border rounded-md  border-grey bg-slate-50">
+          <h3 className="text-lg font-bold text-slate-500">
+            Please select a channel
+          </h3>
+        </section>
+      )}
+      <section className="mt-6">
         <Table>
           <TableCaption>A list of your recent Slack messages.</TableCaption>
           <TableHeader>
@@ -131,7 +147,6 @@ export default function SlackIntegration({ channels, actions }) {
           </TableBody>
         </Table>
       </section>
-      <Toaster />
-    </>
+    </div>
   );
 }

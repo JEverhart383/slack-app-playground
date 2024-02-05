@@ -1,6 +1,6 @@
 This is a [Next.js](https://nextjs.org/) project created to demonstrate how to work with Slack resources in several different ways.
 
-## Getting Started
+## Getting started
 
 To get started, you can clone this repository to your local machine:
 
@@ -15,3 +15,11 @@ Some of the Slack examples, like OAuth and interactivity, require a public HTTPS
 ```
 ngrok http http://localhost:3000
 ```
+
+## Authentication
+
+In general, Slack authentication revolves around different [types of tokens](https://api.slack.com/authentication/token-types). The examples in this repository will illustrate both bot and user token examples.
+
+### Installing as a bot
+
+To obtain [a bot token](https://api.slack.com/start/quickstart), follow these instructions and then create a `.env.local` file and store the bot token as `SLACK_TOKEN` to be used in the examples.
