@@ -56,7 +56,7 @@ export async function sendAlertMessage(channel) {
           text: "Select a team member",
           emoji: true,
         },
-        action_id: "users_select-action",
+        action_id: "users_select",
       },
     },
     {
