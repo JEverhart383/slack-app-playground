@@ -15,7 +15,7 @@ export default async function Home() {
   };
   console.log(channels);
   return (
-    <main className="content-center m-6">
+    <main className="flex flex-col content-center m-6">
       <h1 className="text-2xl font-bold">Slack App Playground</h1>
       <section>
         {isConfigured ? (
@@ -24,7 +24,6 @@ export default async function Home() {
             <SlackIntegration
               channels={channels}
               actions={actions}
-              sendVideoMessage={sendVideoMessage}
             ></SlackIntegration>
           </>
         ) : (
